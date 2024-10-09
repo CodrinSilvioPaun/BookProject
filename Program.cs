@@ -1,11 +1,17 @@
 using BookProject.Middlewares;
+using BookProject.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+// Change the routing to be lowercase
+builder.Services.AddRouting(options => options.LowercaseUrls = true);
+// Add the Book service
+builder.Services.AddScoped<IBookService, BookService>();
+// Add the custom exception handler middleware
+builder.Services.AddTransient<GlobalExceptionHandlerMiddleware>();
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
