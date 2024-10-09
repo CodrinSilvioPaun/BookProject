@@ -1,4 +1,6 @@
-﻿namespace BookProject.Models
+﻿using BookProject.Events;
+
+namespace BookProject.Models
 {
     public class Book
     {
@@ -19,6 +21,51 @@
             Description = description;
             Authors = authors;
             PublishedDate = publishedDate;
+        }
+
+        public void Append(Event @event)
+        {
+            switch (@event)
+            {
+                case BookCreated bookCreated:
+                    Append(bookCreated);
+                    break;
+                case BookUpdated bookUpdated:
+                    Append(bookUpdated);
+                    break;
+            }
+        }
+        private void Append(BookCreated bookCreated)
+        {
+            Id = bookCreated.Id;
+            Title = bookCreated.Title;
+            Description = bookCreated.Description;
+            Authors = bookCreated.Authors;
+            PublishedDate = bookCreated.PublishedDate;
+        }
+
+        private void Append(BookUpdated bookUpdated)
+        {
+            if (!string.IsNullOrEmpty(bookUpdated.Title?.Trim()))
+            {
+                Title = bookUpdated.Title;
+            }
+
+            if (!string.IsNullOrEmpty(bookUpdated.Description?.Trim()))
+            {
+                Description = bookUpdated.Description;
+            }
+
+            if (bookUpdated.Authors != null)
+            {
+                Authors = bookUpdated.Authors;
+            }
+
+            if (bookUpdated.PublishedDate != null && bookUpdated.PublishedDate <= DateTime.Now)
+            {
+                PublishedDate = bookUpdated.PublishedDate;
+            }
+
         }
     }
 }
